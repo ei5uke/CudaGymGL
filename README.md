@@ -1,27 +1,33 @@
 # CudaGymGL
-GPU-Batched Physics Environments for RL, with Real-Time OpenGL Rendering
+**Running thousands of training simulations in parallel, on a GPU.**
 
-CSCI596 final project (solo). Simple Gymnasium-style physics environments written as CUDA C kernels, where one GPU thread simulates one environment copy, so thousands to millions of copies step in parallel. A thin Python wrapper exposes them as a `gymnasium.vector.VectorEnv`, and an OpenGL viewer animates many copies at once.
+<p align="center"><img src="assets/cartpole_grid.gif" width="600" alt="Grid of 24 CartPole simulations running at once"></p>
+<p align="center"><sub>Many copies of one simulation running side by side.</sub></p>
 
-## Plan
+## 1. Background: how AI learns by trial and error
+In **reinforcement learning (RL)**, an AI "agent" learns a task by trying actions in a simulation and getting a score back. Example: balance a pole on a moving cart (**CartPole**, shown above).
 
-**Environments**
-- CartPole (same equations and constants as Gymnasium's `CartPole-v1`)
-- Acrobot (two-link pendulum, RK4 integrator)
-- Balls-in-box (stretch goal): 2D elastic collisions, MD-like pair loops
+<p align="center"><img src="assets/rl_loop.svg" width="560" alt="Agent sends an action to the simulation, which sends back what happened and a score"></p>
 
-**Components**
-1. **CUDA kernels** (`.cu`): one `__global__` step kernel per environment, physics constants in `__constant__` memory, `cudaMalloc`/`cudaMemcpy` for state, in the style of the class assignments (`pdf.cu`, `hypi_setdevice.cu`).
-2. **Serial C baseline**: the same step functions on the CPU, for speedup comparisons.
-3. **Gymnasium wrapper**: kernels built into a shared library (`nvcc -shared`), loaded with `ctypes`, and wrapped as a `gymnasium.vector.VectorEnv`.
-4. **OpenGL viewer**: C + GLUT, modeled on `atomv.c`, drawing a grid of environment copies in real time.
-5. **Benchmarks**: Slurm scripts for USC CARC.
+The agent needs **millions** of these tries to learn. So the speed of the simulation matters a lot.
 
-**Evaluation**
-- Steps/sec vs number of environments N (1 to 10^6): serial C, CUDA kernel only, CUDA through the Python wrapper, and Gymnasium's CPU vector env.
-- Cost of host-device transfer per step.
-- Correctness: CUDA trajectories match Gymnasium for a fixed action sequence; balls-in-box conserves kinetic energy.
-- Optional: multi-GPU scaling with MPI + CUDA.
+## 2. The problem: data keeps crossing between CPU and GPU
+The AI model usually trains on the **GPU**, but popular RL simulations (like the ones in the **Gymnasium** library) run on the **CPU**. So every step, data must be copied back and forth: simulation results go to the GPU, and the model's actions come back to the CPU. Each copy is slow, and it happens millions of times.
 
-## Status
-Planning. Code to come.
+<p align="center"><img src="assets/cpu_gpu_today.svg" width="640" alt="Today: simulation on the CPU and training on the GPU, with data copied between them every step"></p>
+
+## 3. Our approach: put the simulation on the GPU too
+<p align="center"><img src="assets/gpu_only.svg" width="640" alt="Goal: simulation and training both on the GPU, no copying between chips"></p>
+
+- **Write the sim in CUDA:** Now both simulation and training run on the GPU.
+- **Run thousands of copies in parallel:** Each GPU thread runs one copy of the simulation.
+- **Retain modularity:** Wrap the code similar to a normal Gymnasium environment.
+- **Visualize the environment:** An OpenGL window renders the sim in real time (like the GIF above).
+
+Simulations: CartPole and Acrobot (a swinging two-link arm). Stretch goal: balls bouncing in a box.
+
+## 4. Expected results
+- **Speed:** steps per second as the number of copies grows from 1 to 1 million. Compare the normal CPU version against our all-GPU version. We expect the GPU to pull far ahead **ONLY** at large counts. This is because these Gymnasium toy environments are actually very simple for the CPU to produce millions of parallel copies. Herein, GPU parallelization should not truly accelerate learning much.
+- **Copying cost:** measure how much time CPU-to-GPU copying takes per step, and how much we save by removing it.
+- **Correctness:** GPU results match the original Gymnasium simulation step for step.
+- **Demo:** a live window showing many simulations at once.

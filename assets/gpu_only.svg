@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="175" viewBox="0 220 720 175" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+  <rect y="220" width="720" height="175" rx="14" fill="#ffffff"/>
+
+  <!-- Goal -->
+  <text x="30" y="258" font-size="19" font-weight="bold" fill="#223">Our goal: everything stays on the GPU</text>
+  <rect x="150" y="278" width="420" height="100" rx="12" fill="#d6f0e3" stroke="#2f9e6e" stroke-width="2"/>
+  <text x="360" y="302" text-anchor="middle" font-size="18" font-weight="bold" fill="#17553a">GPU</text>
+  <rect x="175" y="316" width="150" height="44" rx="8" fill="#fde5cf" stroke="#d9782b"/>
+  <text x="250" y="343" text-anchor="middle" font-size="15" fill="#7a3d0b">Simulation</text>
+  <rect x="395" y="316" width="150" height="44" rx="8" fill="#ffffff" stroke="#2f9e6e"/>
+  <text x="470" y="343" text-anchor="middle" font-size="15" fill="#17553a">Training</text>
+  <text x="360" y="343" text-anchor="middle" font-size="22" fill="#17553a">⇄</text>
+  <text x="600" y="325" font-size="13" fill="#17553a">no copying</text>
+  <text x="600" y="343" font-size="13" fill="#17553a">between chips</text>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="220" viewBox="0 0 640 220" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334"/>
+    </marker>
+  </defs>
+  <rect width="640" height="220" rx="14" fill="#ffffff"/>
+  <rect x="40" y="70" width="170" height="80" rx="12" fill="#dbe7fb" stroke="#3b6fc4" stroke-width="2"/>
+  <text x="125" y="105" text-anchor="middle" font-size="20" font-weight="bold" fill="#1d3b6e">Agent</text>
+  <text x="125" y="128" text-anchor="middle" font-size="13" fill="#1d3b6e">(the learner)</text>
+  <rect x="430" y="70" width="170" height="80" rx="12" fill="#fde5cf" stroke="#d9782b" stroke-width="2"/>
+  <text x="515" y="105" text-anchor="middle" font-size="20" font-weight="bold" fill="#7a3d0b">Simulation</text>
+  <text x="515" y="128" text-anchor="middle" font-size="13" fill="#7a3d0b">(the "environment")</text>
+  <path d="M210,85 C290,30 350,30 430,85" fill="none" stroke="#334" stroke-width="2.5" marker-end="url(#ah)"/>
+  <text x="320" y="38" text-anchor="middle" font-size="15" fill="#223">action: "push cart left"</text>
+  <path d="M430,135 C350,190 290,190 210,135" fill="none" stroke="#334" stroke-width="2.5" marker-end="url(#ah)"/>
+  <text x="320" y="200" text-anchor="middle" font-size="15" fill="#223">what happened + a score ("still balanced: +1")</text>
+</svg>
